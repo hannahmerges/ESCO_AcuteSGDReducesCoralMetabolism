@@ -1,0 +1,71 @@
+---
+title: "Tris_Calibr"
+author: "Hannah Merges"
+date: "`r Sys.Date()`"
+output: html_document
+---
+
+```{r setup, include=FALSE}
+knitr::opts_chunk$set(echo = TRUE)
+```
+
+## Calculating pH from Tris 
+Using NJS's code from SantaCruz_EcoFun code 
+-  can skip most of beginning because not working with loggers 
+
+## Loading libraries
+```{r}
+### Tris calibration for pH probes! 
+
+library(tidyverse)
+library(seacarb)
+library(broom)
+library(here)
+library(lubridate)
+library(calecopal)
+library(ggridges)
+
+```
+
+## Load and tidy data 
+-  bring in pH calibration files and raw data files
+```{r}
+## bring in Tris Cal info and pH calibration files and raw data files
+pHcalib<-read_csv(here("Data","Original_Data_Processing", "TA_NEC_Calculations", "TrisCal_20230614.csv")) %>% 
+  mutate(TrisCalDate = mdy(TrisCalDate))
+
+#RespoR_Normalized_Full_ExcelUpdates <- read_csv(here("Data","Respo_Full_UpdatedExcel.csv"))
+
+pHData <- read_csv(here("Data", "RespoFiles", "Fragment_Sample_Info", "Fragment_MeasurementSampling_Cabral_Varari.csv")) %>%
+  mutate(TrisCalDate = mdy(TrisCalDate),
+         date = mdy(date)) %>% 
+  select(!c("CobleA":"Diesel_Chen")) %>% 
+  filter(sample_ID!="C0_FGW_061723", sample_ID!="C0_unFGW_060723", sample_ID!="V0_FGW_061723")
+
+```
+
+## Calculate pH Slope 
+
+```{r}
+pHSlope<-pHcalib %>%
+  nest_by(TrisCalDate) %>%
+  dplyr::mutate(fitpH = list(lm(mVTRis~Ttris, data = data))) %>% # linear regression of mV and temp of the tris
+  dplyr::summarise(broom::tidy(fitpH)) %>% # make the output tidy
+  select(TrisCalDate, term, estimate) %>%
+  pivot_wider(names_from = term, values_from = estimate) %>% # put slope and intercept in their own column
+  right_join(.,pHData) %>% # join with the pH sample data
+  mutate(mVTRis = temp_C*Ttris + `(Intercept)`) %>% 
+  mutate(new_pH = pH(Ex=mV,Etris=mVTRis,S=salinity,T=temp_C)) # calculate pH of the samples using the pH seacarb function
+  
+#View(pHSlope)
+
+pHSlope2 <- pHSlope %>% 
+  select(!c("TrisCalDate":"Ttris", "date", "weight_g":"mg_L", "pH_night":"mVTRis"))
+
+
+write_csv(pHSlope2, here("Data", "pHSlope.csv"))
+
+
+
+```
+

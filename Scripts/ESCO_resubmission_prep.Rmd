@@ -22,14 +22,12 @@ library(patchwork)
 
 # General Overview:
 
-## Thoughts for re-analyzing: 
--  Suggested using total N or P. We don't have total N or P, but we do have total DIN (adding NN and NH4). But were NH4 values off, so sticking with using N+N and P
--  It looks like reviewers really want to understand the different drivers. So we are running the exact same model that we used for silicate (as a proxy for SGD), just with each parameter (phosphate, nitrate, silicate, and pH) and then comparing AICs to determine best model for respiration, gross photosynthesis, and calcification.
-
-## Findings from new analyses: 
--  Based on the model selection using AIC values, 
+This script contains code related to specific comments throughout the review process. Some examples of suggestions from reviewers for additional analyses include:
+-  Suggested using total N or P. We don't have total N or P, but we do have total DIN (adding NN and NH4). But were NH4 values off, so stuck with using N+N and P
+-  Reviewers really want to understand the different drivers. Ran the exact same model that we used for silicate (as a proxy for SGD), just with each parameter (phosphate, nitrate, silicate, and pH) and then compared AICs to determine best model for respiration, gross photosynthesis, and calcification. 
 
 # Main Script: 
+- contains all the analyses for models and code for the plots in Figure 3 and supplemental figures. However, if interested in the code for figures 2 and 4, check the VCA_SEP_PhysioPlots_PaperFigures script for more detailed information. 
 
 ### Read in Data 
 ```{r, message=FALSE}
@@ -53,7 +51,8 @@ respo_df_edited <- respo_df_edited %>%
 
 ```
 
-## seeing how many SDs away from the mean the outlier point is 
+### seeing how many SDs away from the mean the outlier point is 
+- (from a reviewer comment requesting extra statistical evidence for removing an outlier)
 
 ```{r}
 outlier_stats <- read_csv(here::here("Data", "NECnuts_withpH.csv"))
@@ -246,6 +245,7 @@ AIC(nitrate_linear_NOsite_R)
 AICc(nitrate_linear_NOsite_R)
 anova(nitrate_linear_NOsite_R)
 summary(nitrate_linear_NOsite_R)
+r.squaredGLMM(nitrate_linear_NOsite_R)
 
 # testing predicted rates 
 pred_nitrate_df <- data.frame(NN_umolL = seq(0, 4, by = 0.1))
@@ -516,7 +516,7 @@ anova(TA_poly_site_GP)
 summary(TA_poly_site_GP)
 
 ##################
-# linear without site
+# linear without site -- BEST MODEL 
 ##################
 
 silicate_linear_NOsite_GP <- lmer(umol.cm2.hr ~ silicate_umolL + (1|date/new_colonynumber), data=standardized_df %>%
@@ -527,6 +527,8 @@ AIC(silicate_linear_NOsite_GP)
 AICc(silicate_linear_NOsite_GP)
 anova(silicate_linear_NOsite_GP)
 summary(silicate_linear_NOsite_GP)
+r.squaredGLMM(silicate_linear_NOsite_GP)
+
 
 
 ## nitrate
@@ -659,7 +661,7 @@ anova(silicate_poly_NOsite_GP, phosphate_poly_NOsite_GP, nitrate_poly_NOsite_GP,
 
 
 ### Calcification Models: 
--  results are wonky, more complicated story... remove TA and salinity as parameters because data are not aligning biologically, and focus on silicate and pH (with silicate being the better/best fitting model - both linear without site)
+-  results are wonky, more complicated story... removed TA and salinity as parameters because data did not aligning biologically, and focused on silicate and pH (with silicate being the better/best fitting model - both linear without site)
 
 ```{r}
 ##################
@@ -799,7 +801,7 @@ anova(TA_poly_site_C)
 summary(TA_poly_site_C)
 
 ##################
-# linear without site
+# linear without site -- BEST MODELS
 ##################
 
 silicate_linear_NOsite_C <- lmer(umol.cm2.hr ~ silicate_umolL + (1|date/new_colonynumber), data=standardized_df %>%
@@ -854,6 +856,7 @@ AIC(pH_linear_NOsite_C)
 AICc(pH_linear_NOsite_C)
 anova(pH_linear_NOsite_C)
 summary(pH_linear_NOsite_C)
+r.squaredGLMM(pH_linear_NOsite_C)
 
 ## TA 
 TA_linear_NOsite_C <- lmer(umol.cm2.hr ~ TA_initial + (1|date/new_colonynumber), data=standardized_df %>%

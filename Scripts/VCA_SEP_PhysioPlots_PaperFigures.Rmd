@@ -32,11 +32,10 @@ library(sjPlot)
 ```
 
 ### Read in your data 
--  See "Initial_DF_construction" markdown file to reference calculations for "RespoR_Normalized_Full_withNEC_nutrients" datafile 
--  Includes normalization to blanks, calculations of NEC, merging nutrient data
 
 ```{r, echo=FALSE, message=FALSE}
-RespoR_Normalized_Full_withNEC_nutrients <- read_csv(here::here("Data", "RespoR_Normalized_Full_withNEC_andallnutrients.csv"))
+RespoR_Normalized_Full_withNEC_nutrients <- read_csv(here::here("Data", "RespoR_Normalized_Full_withNEC_andallnutrients.csv")) ## calculations for this dataset include normalization to blanks, calculations of NEC, merging nutrient data. 
+
 ```
 
 ## Tidy dataset and organize to separate R, GP, and C 

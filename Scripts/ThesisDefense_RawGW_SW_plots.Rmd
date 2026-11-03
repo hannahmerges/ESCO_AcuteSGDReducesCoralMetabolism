@@ -112,10 +112,10 @@ sitecomparison_maxdata <- tribble(~Site, ~Parameter, ~Value,
 ```
 
 
-# Using MY data instead 
--  used nutrient data from my raw gw collected in Chapter 1 
--  TA data though is still from Nyssa (max values from either March OR August) 
--  Only value for NN, Silicate, pH, Salinity for Varari and Cabral, min for offshore for salinity and pH (taken from my records), and max for NN and silicate from March 2022 data 
+# Using HM data instead 
+-  used nutrient data from raw gw collected during field season 2023
+-  TA data though is still from NJS (max values from either March OR August) 
+-  Only value for NN, Silicate, pH, Salinity for Varari and Cabral, min for offshore for salinity and pH (taken from HM records), and max for NN and silicate from March 2022 data 
 
 ```{r}
 Hannah_endmemberdata <- tribble(~Site, ~Parameter, ~Value, 
