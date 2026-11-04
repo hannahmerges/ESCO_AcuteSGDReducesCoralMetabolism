@@ -16,3 +16,5 @@ Hannah E. Merges (1) *, Maya Zeff (2), and Nyssa J. Silbiger (3)
 
 -  Author for correspondence (merges.hannah@gmail.com, ORCID: 0009-0004-2697-6316)
 
+-  [![DOI](https://zenodo.org/badge/1340076946.svg)](https://doi.org/10.5281/zenodo.23933763)
+
